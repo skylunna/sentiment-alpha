@@ -136,15 +136,16 @@ class SentimentAnalyzer:
             'sentiment_score': sentiment_score
         }
     
-    def analyze_dataframe(self, df: pd.DataFrame, text_column: str = 'title') -> pd.DataFrame:
+    def analyze_dataframe(self, df: pd.DataFrame, text_column: str = 'title', summary_column: str = 'summary') -> pd.DataFrame:
         """
         批量分析 DataFrame 中的文本
         """
         results = []
 
         for idx, row in df.iterrows():
-            text = row.get(text_column, '')
-            sentiment = self.analyze_text(text)
+            title = row.get(text_column, '')
+            summary = row.get(summary_column, '') if summary_column in df.columns else ''
+            sentiment = self.analyze_text(title, summary)
             results.append(sentiment)
         
         result_df = pd.DataFrame(results)
