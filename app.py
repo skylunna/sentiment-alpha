@@ -36,6 +36,16 @@ if st.sidebar.button("🔍 Analyze Sentiment"):
         # 1. 获取新闻
         news_df = scraper.fetch_yahoo_finance_news(ticker, num_articles)
         
+        # 调试
+        with st.expander("🔍 调试：查看原始新闻数据"):
+            st.write(f"新闻数量: {len(news_df)}")
+            if not news_df.empty:
+                st.write("列名: ", news_df.columns.tolist())
+                st.write("第一行数据: ")
+                st.json(news_df.iloc[0].to_dict())
+            else:
+                st.warning("新闻数据为空")
+
         if news_df.empty:
             st.warning(f"⚠️ No news found for {ticker}. Try another ticker or check your network.")
             st.stop()
