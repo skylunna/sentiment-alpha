@@ -27,6 +27,22 @@ num_articles = st.sidebar.slider("Number of Articles", 5, 50, 20)
 def get_analyzer():
     return SentimentAnalyzer()
 
+def interpret_sentiment(pos_ratio: float, avg_score: float, article_count: int) -> str:
+    """
+    提供情绪数据的专业解读（非投资建议）
+    """
+    if article_count < 5:
+        return "⚠️ 新闻样本较少，情绪指标参考性有限"
+    
+    if avg_score > 0.5 and pos_ratio > 0.6:
+        return "🟢 情绪显著偏多：市场讨论氛围乐观，但需结合技术面确认"
+    elif avg_score < -0.5 and pos_ratio < 0.3:
+        return "🔴 情绪显著偏空：市场讨论氛围谨慎，注意风险控制"
+    elif abs(avg_score) < 0.2:
+        return "⚪ 情绪中性：市场讨论无明显倾向，观望为主"
+    else:
+        return "🟡 情绪温和：存在一定倾向，但信号强度一般"
+
 scraper = NewsScraper()
 analyzer = get_analyzer()
 
@@ -74,6 +90,12 @@ if st.sidebar.button("🔍 Analyze Sentiment"):
         col3.metric("Avg Sentiment", f"{avg_sentiment:.2f}", 
                     delta="Bullish 📈" if avg_sentiment > 0 else "Bearish 📉")
         
+        interpretation = interpret_sentiment(
+            pos_ratio=pos_count/len(analyzed_df),
+            avg_score=avg_sentiment,
+            article_count=len(analyzed_df)
+        )
+        st.info(f"💡 情绪解读：{interpretation}")
         # 情绪分布图
         fig_pie = go.Figure(data=[go.Pie(
             labels=['Positive', 'Negative', 'Neutral'],
