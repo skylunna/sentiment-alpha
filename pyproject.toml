@@ -9,6 +9,7 @@ dependencies = [
     "pandas>=2.3.3",
     "plotly>=6.6.0",
     "requests>=2.33.0",
+    "ruff>=0.15.8",
     "streamlit>=1.55.0",
     "torch>=2.11.0",
     "transformers>=5.3.0",
@@ -18,4 +19,26 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=9.0.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]  
+testpaths = ["test", "tests"]  # 测试目录
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+]
+
+# 注册自定义标记，消除警告
+markers = [
+    "integration: marks tests that require network access",
+    "slow: marks tests that take longer than 5 seconds",
+    "core: marks core functionality tests",
+    "timezone: marks timezone handling tests"
 ]
